@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>REZEKI 2026 - Plan 7 Hari</title>
+    
+    <!-- iOS Web App Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="REZEKI 2026">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts (Plus Jakarta Sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Configuration for custom fonts and animations -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        iosBlue: '#007AFF',
+                        iosGreen: '#34C759',
+                        iosOrange: '#FF9500',
+                        iosRed: '#FF3B30',
+                        iosLightBg: '#F2F2F7',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Hide scrollbars for cleaner iOS feel */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        body {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .ios-blur {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+    </style>
+</head>
+<body class="bg-[#F2F2F7] text-gray-900 h-full overflow-hidden flex flex-col font-sans">
+
+    <!-- React App Container -->
+    <div id="root" class="h-full flex flex-col"></div>
+
+    <!-- Load Core React Libraries -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <!-- Babel for JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- React Implementation -->
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Source data based on the provided plan: "PLAN 7 HARI WEEK 1 JUNI 2026.png"
+        const PLAN_DATA = {
+            targetMingguan: [
+                { id: 't1', text: '100 outreach freelance terkirim', goal: 100, unit: 'outreach', type: 'freelance' },
+                { id: 't2', text: '50 lamaran kerja terkirim', goal: 50, unit: 'lamaran', type: 'jobSearch' },
+                { id: 't3', text: '3 meeting/call', goal: 3, unit: 'meeting', type: 'freelance' },
+                { id: 't4', text: '3 proposal terkirim', goal: 3, unit: 'proposal', type: 'freelance' },
+                { id: 't5', text: '1 DEAL FREELANCE ATAU 1 PROSES INTERVIEW LANJUT', goal: 1, unit: 'deal', type: 'targetUtama' }
+            ],
+            rules: [
+                "Jangan belajar skill baru",
+                "Jangan bikin website kedua",
+                "Jangan ganti niche lagi",
+                "Jangan bikin agency branding",
+                "Jangan bikin logo/company profile",
+                "Jangan bikin sistem baru",
+                "Jangan buka proyek baru yang tidak menghasilkan uang cepat"
+            ],
+            harian: {
+                1: {
+                    nama: "Senin",
+                    fokus: "Positioning, Aset Inti & Persiapan Dasar",
+                    sub: "Bangun fondasi untuk di jual & dilamar.",
+                    freelance: [
+                        "Tentukan positioning & nilai utama",
+                        "Tentukan offer & paket harga",
+                        "Buat 3 studi kasus (Amiraya, AdCuan, Landing Page/Funnel)",
+                        "Buat landing page/portfolio sederhana",
+                        "Siapkan materi presentasi singkat"
+                    ],
+                    jobSearch: [
+                        "Update CV (1-2 halaman)",
+                        "Optimasi LinkedIn (foto, headline, summary, experience)",
+                        "Buat headline yang menarik",
+                        "Siapkan cover letter template"
+                    ],
+                    output: [
+                        "CV siap",
+                        "LinkedIn update",
+                        "Portfolio siap",
+                        "3 Studi Kasus siap"
+                    ]
+                },
+                2: {
+                    nama: "Selasa",
+                    fokus: "Riset & Kumpulkan Data Prospek & Lowongan",
+                    sub: "Siapkan list sebanyak mungkin.",
+                    freelance: [
+                        "Kumpulkan 100 prospek potensial",
+                        "Cari kontak (WA/IG/Email/Website)",
+                        "Masukkan ke spreadsheet",
+                        "Segmentasi prospek"
+                    ],
+                    jobSearch: [
+                        "Cari 30 lowongan relevan",
+                        "Simpan link lowongan",
+                        "Baca detail requirement",
+                        "Catat perusahaan prioritas"
+                    ],
+                    output: [
+                        "100 Prospek terkumpul",
+                        "30 Lowongan tersimpan"
+                    ]
+                },
+                3: {
+                    nama: "Rabu",
+                    fokus: "Outreach Gelombang 1",
+                    sub: "Mulai kirim & buka percakapan.",
+                    freelance: [
+                        "Kirim 50 outreach (observasi + nilai)",
+                        "Gunakan template personal",
+                        "Tawarkan audit gratis/lihat contoh",
+                        "Catat yang reply"
+                    ],
+                    jobSearch: [
+                        "Kirim 15 lamaran kerja",
+                        "Sesuaikan CV dengan posisi",
+                        "Kirim dengan cover letter singkat",
+                        "Catat status lamaran"
+                    ],
+                    output: [
+                        "50 Outreach terkirim",
+                        "15 Lamaran terkirim"
+                    ]
+                },
+                4: {
+                    nama: "Kamis",
+                    fokus: "Outreach Gelombang 2 & Follow Up",
+                    sub: "Tambah volume & follow up.",
+                    freelance: [
+                        "Kirim 50 outreach lagi",
+                        "Follow up batch pertama (yg belum balas)",
+                        "Balas semua yang reply",
+                        "Jadwalkan call jika ada minat"
+                    ],
+                    jobSearch: [
+                        "Kirim 15 lamaran lagi",
+                        "Follow up lamaran yg sudah dikirim",
+                        "Cari 5-10 lowongan tambahan"
+                    ],
+                    output: [
+                        "Total 100 Outreach",
+                        "Total 30 Lamaran"
+                    ]
+                },
+                5: {
+                    nama: "Jumat",
+                    fokus: "Respon Masuk & Jadwalkan Meeting",
+                    sub: "Ubah respon jadi percakapan nyata.",
+                    freelance: [
+                        "Balas semua respon masuk",
+                        "Jadwalkan meeting/call",
+                        "Siapkan audit singkat prospek",
+                        "Kirim contoh hasil/studi kasus"
+                    ],
+                    jobSearch: [
+                        "Kirim 10 lamaran tambahan",
+                        "Follow up recruiter (email/LinkedIn)",
+                        "Aktif di LinkedIn (komen, connect)"
+                    ],
+                    output: [
+                        "1-3 Meeting dijadwalkan",
+                        "Total 40 Lamaran"
+                    ]
+                },
+                6: {
+                    nama: "Sabtu",
+                    fokus: "Kirim Proposal & Follow Up",
+                    sub: "Tawarkan solusi & tutup peluang.",
+                    freelance: [
+                        "Kirim proposal ke prospek yang cocok",
+                        "Tawarkan paket sesuai kebutuhan",
+                        "Follow up proposal",
+                        "Negosiasi & closing"
+                    ],
+                    jobSearch: [
+                        "Kirim 10 lamaran tambahan",
+                        "Follow up update lamaran",
+                        "Siapkan diri untuk interview (riset perusahaan, latihan)"
+                    ],
+                    output: [
+                        "3 Proposal terkirim",
+                        "Total 50 Lamaran"
+                    ]
+                },
+                7: {
+                    nama: "Minggu",
+                    fokus: "Review, Evaluasi & Rencana Minggu Depan",
+                    sub: "Ukur hasil, perbaiki, tingkatkan.",
+                    freelance: [
+                        "Hitung: outreach, reply, meeting, proposal, deal",
+                        "Evaluasi pesan yang paling efektif",
+                        "Niche & tipe prospek paling responsif",
+                        "Rencana minggu depan (scale up)"
+                    ],
+                    jobSearch: [
+                        "Hitung: lamaran, response, interview",
+                        "Evaluasi posisi & perusahaan yang merespon",
+                        "Rencana aplikasi minggu depan"
+                    ],
+                    output: [
+                        "Laporan mingguan selesai",
+                        "Rencana minggu depan siap eksekusi"
+                    ]
+                }
+            }
+        };
+
+        function App() {
+            // Screen / Navigation states: 'dashboard', 'planner', 'metrics', 'rules', 'timer'
+            const [currentTab, setCurrentTab] = useState('dashboard');
+            const [selectedDay, setSelectedDay] = useState(1);
+            
+            // Checkboxes state
+            const [taskChecks, setTaskChecks] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('rezeki_2026_tasks');
+                    return saved ? JSON.parse(saved) : {};
+                } catch (e) {
+                    return {};
+                }
+            });
+
+            // Output checks state
+            const [outputChecks, setOutputChecks] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('rezeki_2026_outputs');
+                    return saved ? JSON.parse(saved) : {};
+                } catch (e) {
+                    return {};
+                }
+            });
+
+            // Metric tracking (numerical) per day
+            const [metricsData, setMetricsData] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('rezeki_2026_metrics_v2');
+                    if (saved) return JSON.parse(saved);
+                } catch (e) {}
+                
+                // default structure empty for days 1-7
+                const initial = {};
+                for (let i = 1; i <= 7; i++) {
+                    initial[i] = {
+                        outreach: 0,
+                        reply: 0,
+                        meeting: 0,
+                        proposal: 0,
+                        deal: 0,
+                        lamaran: 0,
+                        response: 0,
+                        interview: 0,
+                        offer: 0,
+                        amirayaStatus: false,
+                        notes: ''
+                    };
+                }
+                return initial;
+            });
+
+            // Timer (Stopwatch) states for Alokasi Waktu
+            const [timerActive, setTimerActive] = useState(false);
+            const [timerType, setTimerType] = useState('freelance'); // freelance, jobsearch, amiraya
+            const [timerSeconds, setTimerSeconds] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('rezeki_2026_timer_seconds');
+                    return saved ? JSON.parse(saved) : { freelance: 0, jobsearch: 0, amiraya: 0 };
+                } catch (e) {
+                    return { freelance: 0, jobsearch: 0, amiraya: 0 };
+                }
+            });
+
+            const [iosInstallPrompt, setIosInstallPrompt] = useState(false);
+
+            // Sync with local storage safely
+            useEffect(() => {
+                localStorage.setItem('rezeki_2026_tasks', JSON.stringify(taskChecks));
+            }, [taskChecks]);
+
+            useEffect(() => {
+                localStorage.setItem('rezeki_2026_outputs', JSON.stringify(outputChecks));
+            }, [outputChecks]);
+
+            useEffect(() => {
+                localStorage.setItem('rezeki_2026_metrics_v2', JSON.stringify(metricsData));
+            }, [metricsData]);
+
+            useEffect(() => {
+                localStorage.setItem('rezeki_2026_timer_seconds', JSON.stringify(timerSeconds));
+            }, [timerSeconds]);
+
+            // Timer Tick effect
+            useEffect(() => {
+                let interval = null;
+                if (timerActive) {
+                    interval = setInterval(() => {
+                        setTimerSeconds(prev => {
+                            const updated = { ...prev, [timerType]: prev[timerType] + 1 };
+                            return updated;
+                        });
+                    }, 1000);
+                } else {
+                    clearInterval(interval);
+                }
+                return () => clearInterval(interval);
+            }, [timerActive, timerType]);
+
+            // Check if opened as standalone or check iOS Safari
+            useEffect(() => {
+                const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+                const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
+                if (!isStandalone && isIos) {
+                    // Show custom installation card
+                    setIosInstallPrompt(true);
+                }
+            }, []);
+
+            // Sum metrics for Weekly Progress calculations
+            const getCumulativeMetrics = () => {
+                const total = {
+                    outreach: 0,
+                    reply: 0,
+                    meeting: 0,
+                    proposal: 0,
+                    deal: 0,
+                    lamaran: 0,
+                    response: 0,
+                    interview: 0,
+                    offer: 0
+                };
+                Object.values(metricsData).forEach(day => {
+                    total.outreach += Number(day.outreach || 0);
+                    total.reply += Number(day.reply || 0);
+                    total.meeting += Number(day.meeting || 0);
+                    total.proposal += Number(day.proposal || 0);
+                    total.deal += Number(day.deal || 0);
+                    total.lamaran += Number(day.lamaran || 0);
+                    total.response += Number(day.response || 0);
+                    total.interview += Number(day.interview || 0);
+                    total.offer += Number(day.offer || 0);
+                });
+                return total;
+            };
+
+            const cumulative = getCumulativeMetrics();
+
+            // Toggle tasks functions
+            const toggleTask = (dayId, type, index) => {
+                const key = `${dayId}_${type}_${index}`;
+                setTaskChecks(prev => ({ ...prev, [key]: !prev[key] }));
+            };
+
+            const toggleOutput = (dayId, index) => {
+                const key = `${dayId}_out_${index}`;
+                setOutputChecks(prev => ({ ...prev, [key]: !prev[key] }));
+            };
+
+            // Calculate progress of current day's checklist
+            const getDayProgress = (dayNum) => {
+                const day = PLAN_DATA.harian[dayNum];
+                if (!day) return 0;
+                
+                const totalTasks = day.freelance.length + day.jobSearch.length + day.output.length;
+                let completed = 0;
+
+                day.freelance.forEach((_, i) => {
+                    if (taskChecks[`${dayNum}_freelance_${i}`]) completed++;
+                });
+                day.jobSearch.forEach((_, i) => {
+                    if (taskChecks[`${dayNum}_jobSearch_${i}`]) completed++;
+                });
+                day.output.forEach((_, i) => {
+                    if (outputChecks[`${dayNum}_out_${i}`]) completed++;
+                });
+
+                return totalTasks === 0 ? 0 : Math.round((completed / totalTasks) * 100);
+            };
+
+            // Format Timer Duration (hh:mm:ss)
+            const formatTime = (totalSec) => {
+                const hrs = Math.floor(totalSec / 3600);
+                const mins = Math.floor((totalSec % 3600) / 60);
+                const secs = totalSec % 60;
+                return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            };
+
+            return (
+                <div className="flex flex-col h-full bg-[#F2F2F7] safe-top safe-bottom relative overflow-hidden">
+                    
+                    {/* Apple Style Top Header */}
+                    <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+                        <div>
+                            <span className="text-xs font-bold uppercase tracking-wider text-blue-600">WEEK 1 JUNI 2026</span>
+                            <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-1.5">
+                                REZEKI 2026 <span className="bg-red-500 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse">Action</span>
+                            </h1>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            {/* Live Target Status Pill */}
+                            <div className="bg-emerald-50 text-emerald-700 text-xs px-3 py-1.5 rounded-full font-bold border border-emerald-100 flex items-center gap-1">
+                                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                Live Tracker
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Main Content Area - Scrollable */}
+                    <main className="flex-1 overflow-y-auto px-4 py-4 space-y-5 pb-24">
+
+                        {/* Custom Banner For Safari Installer */}
+                        {iosInstallPrompt && (
+                            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl p-4 shadow-lg relative overflow-hidden flex flex-col justify-between">
+                                <button onClick={() => setIosInstallPrompt(false)} className="absolute right-3 top-3 bg-white/10 hover:bg-white/20 p-1.5 rounded-full text-white">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                                <div className="pr-8">
+                                    <h4 className="font-extrabold text-base mb-1">Pasang Sebagai App di iPhone</h4>
+                                    <p className="text-xs text-blue-50/90 leading-relaxed mb-3">
+                                        Tap tombol <strong className="underline">Bagikan / Share</strong> di bawah layar Safari Anda, lalu gulir dan pilih <strong className="underline">Tambah ke Layar Utama / Add to Home Screen</strong> untuk tampilan penuh & bersih.
+                                    </p>
+                                </div>
+                                <div className="bg-white/15 px-3 py-2 rounded-xl text-xs flex items-center gap-2 font-medium">
+                                    <svg className="w-5 h-5 text-amber-300 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                    Beri nama aplikasi 'REZEKI 2026' untuk akses instan di Home Screen!
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB 1: DASHBOARD */}
+                        {currentTab === 'dashboard' && (
+                            <div className="space-y-4">
+                                {/* Quick Dashboard Overview Card */}
+                                <div className="bg-gradient-to-br from-indigo-900 to-slate-900 text-white p-5 rounded-2xl shadow-xl flex flex-col gap-4 relative overflow-hidden">
+                                    <div className="absolute right-[-40px] top-[-30px] opacity-10 pointer-events-none">
+                                        <svg width="200" height="200" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 22h20L12 2zm0 3.99L19.53 19H4.47L12 5.99z"/></svg>
+                                    </div>
+                                    <div>
+                                        <span className="text-[11px] bg-red-500 font-extrabold tracking-widest uppercase px-2 py-0.5 rounded">UTAMA MINGGU INI</span>
+                                        <h3 className="text-lg font-extrabold mt-1 leading-tight">Dapatkan 1 Deal Freelance ATAU 1 Proses Interview Lanjut!</h3>
+                                        <p className="text-xs text-gray-300 mt-1">Ingat: Pasar tidak merespon jika tidak menawarkan diri. VOLUME ACTION &gt; ALL!</p>
+                                    </div>
+                                    <div className="border-t border-white/10 pt-3 flex justify-between items-center text-xs">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="w-2.5 h-2.5 rounded-full bg-blue-400"></span>
+                                            <span>Freelance 60% (~5 Jam)</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                                            <span>Job Search 30% (~2.5 Jam)</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                                            <span>Amiraya 10% (~1 Jam)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Minimum Success Criteria Checklist & Target Bar */}
+                                <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h3 className="font-extrabold text-base text-gray-900 flex items-center gap-2">
+                                            <svg className="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                            Kriteria Sukses Minimum (Mingguan)
+                                        </h3>
+                                        <span className="text-xs text-gray-500 font-semibold">Progress Live</span>
+                                    </div>
+                                    
+                                    <div className="space-y-4">
+                                        {/* Outreach Tracker */}
+                                        <div>
+                                            <div className="flex justify-between text-xs mb-1 font-semibold">
+                                                <span className="text-gray-700">100 Outreach Freelance</span>
+                                                <span className={`${cumulative.outreach >= 100 ? 'text-emerald-600 font-extrabold' : 'text-blue-600'}`}>{cumulative.outreach} / 100</span>
+                                            </div>
+                                            <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                                                <div className="bg-blue-600 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min((cumulative.outreach / 100) * 100, 100)}%` }}></div>
+                                            </div>
+                                        </div>
+
+                                        {/* Lamaran Tracker */}
+                                        <div>
+                                            <div className="flex justify-between text-xs mb-1 font-semibold">
+                                                <span className="text-gray-700">50 Lamaran Kerja Terkirim</span>
+                                                <span className={`${cumulative.lamaran >= 50 ? 'text-emerald-600 font-extrabold' : 'text-blue-600'}`}>{cumulative.lamaran} / 50</span>
+                                            </div>
+                                            <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                                                <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min((cumulative.lamaran / 50) * 100, 100)}%` }}></div>
+                                            </div>
+                                        </div>
+
+                                        {/* Meeting Tracker */}
+                                        <div>
+                                            <div className="flex justify-between text-xs mb-1 font-semibold">
+                                                <span className="text-gray-700">3 Meeting/Call</span>
+                                                <span className={`${cumulative.meeting >= 3 ? 'text-emerald-600 font-extrabold' : 'text-blue-600'}`}>{cumulative.meeting} / 3</span>
+                                            </div>
+                                            <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                                                <div className="bg-purple-500 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min((cumulative.meeting / 3) * 100, 100)}%` }}></div>
+                                            </div>
+                                        </div>
+
+                                        {/* Proposal Tracker */}
+                                        <div>
+                                            <div className="flex justify-between text-xs mb-1 font-semibold">
+                                                <span className="text-gray-700">3 Proposal Terkirim</span>
+                                                <span className={`${cumulative.proposal >= 3 ? 'text-emerald-600 font-extrabold' : 'text-blue-600'}`}>{cumulative.proposal} / 3</span>
+                                            </div>
+                                            <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                                                <div className="bg-amber-500 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min((cumulative.proposal / 3) * 100, 100)}%` }}></div>
+                                            </div>
+                                        </div>
+
+                                        {/* Deal Tracker */}
+                                        <div className="pt-2 border-t border-gray-100 mt-2">
+                                            <div className="flex justify-between text-xs mb-1 font-semibold items-center">
+                                                <span className="text-gray-900 font-extrabold text-[13px]">1 DEAL/INTERVIEW LANJUT ⭐</span>
+                                                <span className={`px-2.5 py-1 rounded text-[11px] font-bold ${
+                                                    (cumulative.deal + cumulative.interview > 0) 
+                                                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                                                    : 'bg-indigo-50 text-indigo-700 border border-indigo-100'
+                                                }`}>
+                                                    {cumulative.deal + cumulative.interview > 0 ? "MET (Closing) 🎉" : "BELUM DEAL"}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Timer & Focus State Quick Overview */}
+                                <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-3 bg-red-50 text-red-500 rounded-xl">
+                                            <svg className="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-extrabold text-sm text-gray-900">Alokasi Waktu Harian</h4>
+                                            <p className="text-xs text-gray-500">Mulai timer fokus harian Anda</p>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => setCurrentTab('timer')} className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md transition-all active:scale-95">
+                                        Buka Timer
+                                    </button>
+                                </div>
+
+                                {/* 7-Day Quick Progress Navigator */}
+                                <div className="space-y-3">
+                                    <h3 className="font-extrabold text-base text-gray-900 px-1">Kemajuan Mingguan (Harian)</h3>
+                                    <div className="grid grid-cols-1 gap-2.5">
+                                        {Object.keys(PLAN_DATA.harian).map(dayId => {
+                                            const day = PLAN_DATA.harian[dayId];
+                                            const progress = getDayProgress(dayId);
+                                            return (
+                                                <div key={dayId} 
+                                                     onClick={() => { setSelectedDay(Number(dayId)); setCurrentTab('planner'); }}
+                                                     className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center justify-between active:bg-gray-50 transition-all cursor-pointer">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex flex-col justify-center items-center font-bold">
+                                                            <span className="text-[10px] leading-none uppercase text-blue-400">Hari</span>
+                                                            <span className="text-base leading-none mt-0.5">{dayId}</span>
+                                                        </div>
+                                                        <div>
+                                                            <div className="flex items-center gap-2">
+                                                                <h4 className="font-extrabold text-sm text-gray-900">{day.nama}</h4>
+                                                                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded uppercase ${
+                                                                    progress === 100 ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'
+                                                                }`}>
+                                                                    {progress === 100 ? "Selesai ✨" : "Sedang Jalan"}
+                                                                </span>
+                                                            </div>
+                                                            <p className="text-xs text-gray-500 line-clamp-1">{day.fokus}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="text-right">
+                                                            <span className="text-xs font-bold text-gray-900">{progress}%</span>
+                                                            <div className="w-16 bg-gray-100 h-1.5 rounded-full mt-1 overflow-hidden">
+                                                                <div className="bg-blue-600 h-full rounded-full" style={{ width: `${progress}%` }}></div>
+                                                            </div>
+                                                        </div>
+                                                        <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"></path>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB 2: PLANNER */}
+                        {currentTab === 'planner' && (
+                            <div className="space-y-4">
+                                {/* 7-Day Picker Bubble List */}
+                                <div className="flex gap-2 overflow-x-auto py-1">
+                                    {Object.keys(PLAN_DATA.harian).map(dayId => {
+                                        const dayNum = Number(dayId);
+                                        const isSelected = selectedDay === dayNum;
+                                        const day = PLAN_DATA.harian[dayId];
+                                        return (
+                                            <button 
+                                                key={dayId}
+                                                onClick={() => setSelectedDay(dayNum)}
+                                                className={`flex-shrink-0 px-4 py-2.5 rounded-full text-xs font-bold transition-all duration-150 ${
+                                                    isSelected 
+                                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-200 scale-105' 
+                                                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-100'
+                                                }`}
+                                            >
+                                                {day.nama} (H{dayNum})
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                {/* Detailed Focus Card for selected Day */}
+                                <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                                    <span className="text-[10px] font-extrabold uppercase bg-indigo-50 text-indigo-600 px-2 py-1 rounded-md">Hari {selectedDay} • Agenda Fokus</span>
+                                    <h2 className="text-lg font-extrabold text-gray-900 mt-2 leading-tight">{PLAN_DATA.harian[selectedDay].fokus}</h2>
+                                    <p className="text-xs text-gray-500 mt-1 leading-relaxed">{PLAN_DATA.harian[selectedDay].sub}</p>
+                                    
+                                    {/* Small dynamic progress block for specific day */}
+                                    <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+                                        <span className="text-xs text-gray-500 font-semibold">Progres Harian</span>
+                                        <span className="text-xs font-extrabold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{getDayProgress(selectedDay)}% Selesai</span>
+                                    </div>
+                                </div>
+
+                                {/* FREELANCE Checklist section (60%) */}
+                                <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-sm font-extrabold text-blue-600 flex items-center gap-1.5 uppercase tracking-wide">
+                                            <span className="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+                                            Freelance (60%) Aksi
+                                        </h3>
+                                        <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md font-bold">~5 Jam Harian</span>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {PLAN_DATA.harian[selectedDay].freelance.map((task, idx) => {
+                                            const isChecked = taskChecks[`${selectedDay}_freelance_${idx}`] || false;
+                                            return (
+                                                <div 
+                                                    key={idx}
+                                                    onClick={() => toggleTask(selectedDay, 'freelance', idx)}
+                                                    className="flex items-start gap-3 active:bg-gray-50 p-1.5 rounded-lg transition-all cursor-pointer"
+                                                >
+                                                    <div className={`mt-0.5 w-5 h-5 rounded-md border flex items-center justify-center transition-all ${isChecked ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300 bg-white'}`}>
+                                                        {isChecked && <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
+                                                    </div>
+                                                    <span className={`text-xs leading-relaxed ${isChecked ? 'line-through text-gray-400' : 'text-gray-700 font-medium'}`}>{task}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                {/* JOB SEARCH Checklist section (30%) */}
+                                <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-sm font-extrabold text-emerald-600 flex items-center gap-1.5 uppercase tracking-wide">
+                                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                                            Job Search (30%) Aksi
+                                        </h3>
+                                        <span className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md font-bold">~2.5 Jam Harian</span>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {PLAN_DATA.harian[selectedDay].jobSearch.map((task, idx) => {
+                                            const isChecked = taskChecks[`${selectedDay}_jobSearch_${idx}`] || false;
+                                            return (
+                                                <div 
+                                                    key={idx}
+                                                    onClick={() => toggleTask(selectedDay, 'jobSearch', idx)}
+                                                    className="flex items-start gap-3 active:bg-gray-50 p-1.5 rounded-lg transition-all cursor-pointer"
+                                                >
+                                                    <div className={`mt-0.5 w-5 h-5 rounded-md border flex items-center justify-center transition-all ${isChecked ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-gray-300 bg-white'}`}>
+                                                        {isChecked && <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
+                                                    </div>
+                                                    <span className={`text-xs leading-relaxed ${isChecked ? 'line-through text-gray-400' : 'text-gray-700 font-medium'}`}>{task}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                {/* OUTPUT HARI INI checklist section */}
+                                <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl p-5 border border-indigo-100 space-y-4">
+                                    <h3 className="text-xs font-extrabold text-indigo-900 uppercase tracking-widest flex items-center gap-1">
+                                        <svg className="w-4 h-4 text-indigo-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                                        </svg>
+                                        Target Output Hari Ini
+                                    </h3>
+                                    <div className="space-y-3">
+                                        {PLAN_DATA.harian[selectedDay].output.map((task, idx) => {
+                                            const isChecked = outputChecks[`${selectedDay}_out_${idx}`] || false;
+                                            return (
+                                                <div 
+                                                    key={idx}
+                                                    onClick={() => toggleOutput(selectedDay, idx)}
+                                                    className="flex items-center gap-3 bg-white p-3 rounded-xl border border-indigo-100/60 transition-all active:scale-[0.99] cursor-pointer"
+                                                >
+                                                    <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all ${isChecked ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-gray-300 bg-white'}`}>
+                                                        {isChecked && <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
+                                                    </div>
+                                                    <span className={`text-xs font-bold leading-none ${isChecked ? 'line-through text-gray-400' : 'text-indigo-950'}`}>{task}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB 3: METRICS */}
+                        {currentTab === 'metrics' && (
+                            <div className="space-y-4">
+                                <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                                    <h2 className="text-base font-extrabold text-gray-950 flex items-center gap-2">
+                                        <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2"></path>
+                                        </svg>
+                                        Log Pencapaian Harian
+                                    </h2>
+                                    <p className="text-xs text-gray-500 mt-1">Input metrik nyata Anda setiap hari untuk kalkulasi pencapaian target mingguan.</p>
+                                    
+                                    {/* Day dropdown selector */}
+                                    <div className="mt-4 flex gap-2 items-center">
+                                        <span className="text-xs text-gray-600 font-bold">Input untuk Hari:</span>
+                                        <select 
+                                            value={selectedDay} 
+                                            onChange={(e) => setSelectedDay(Number(e.target.value))}
+                                            className="bg-[#F2F2F7] border-0 text-xs font-bold py-2 px-3 rounded-lg text-blue-600 outline-none"
+                                        >
+                                            {Object.keys(PLAN_DATA.harian).map(d => (
+                                                <option key={d} value={d}>{PLAN_DATA.harian[d].nama}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Metrics Inputs Card */}
+                                <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-4">
+                                    <div className="border-b border-gray-100 pb-2">
+                                        <h3 className="text-xs font-extrabold uppercase text-blue-600 tracking-wider">FREELANCE METRICS</h3>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="text-[10px] font-bold text-gray-500 block mb-1 uppercase">Outreach Hari Ini</label>
+                                            <input 
+                                                type="number" 
+                                                value={metricsData[selectedDay].outreach || ''}
+                                                onChange={(e) => setMetricsData({
+                                                    ...metricsData,
+                                                    [selectedDay]: { ...metricsData[selectedDay], outreach: Number(e.target.value) }
+                                                })}
+                                                className="w-full bg-[#F2F2F7] focus:bg-white rounded-xl py-2 px-3 text-sm font-bold border-0 focus:ring-2 focus:ring-blue-600 outline-none text-center"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-bold text-gray-500 block mb-1 uppercase">Reply Diterima</label>
+                                            <input 
+                                                type="number" 
+                                                value={metricsData[selectedDay].reply || ''}
+                                                onChange={(e) => setMetricsData({
+                                                    ...metricsData,
+                                                    [selectedDay]: { ...metricsData[selectedDay], reply: Number(e.target.value) }
+                                                })}
+                                                className="w-full bg-[#F2F2F7] focus:bg-white rounded-xl py-2 px-3 text-sm font-bold border-0 focus:ring-2 focus:ring-blue-600 outline-none text-center"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-bold text-gray-500 block mb-1 uppercase">Meeting Terjadwal</label>
+                                            <input 
+                                                type="number" 
+                                                value={metricsData[selectedDay].meeting || ''}
+                                                onChange={(e) => setMetricsData({
+                                                    ...metricsData,
+                                                    [selectedDay]: { ...metricsData[selectedDay], meeting: Number(e.target.value) }
+                                                })}
+                                                className="w-full bg-[#F2F2F7] focus:bg-white rounded-xl py-2 px-3 text-sm font-bold border-0 focus:ring-2 focus:ring-blue-600 outline-none text-center"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-bold text-gray-500 block mb-1 uppercase">Proposal Dikirim</label>
+                                            <input 
+                                                type="number" 
+                                                value={metricsData[selectedDay].proposal || ''}
+                                                onChange={(e) => setMetricsData({
+                                                    ...metricsData,
+                                                    [selectedDay]: { ...metricsData[selectedDay], proposal: Number(e.target.value) }
+                                                })}
+                                                className="w-full bg-[#F2F2F7] focus:bg-white rounded-xl py-2 px-3 text-sm font-bold border-0 focus:ring-2 focus:ring-blue-600 outline-none text-center"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                        <div className="col-span-2">
+                                            <label className="text-[10px] font-bold text-gray-500 block mb-1 uppercase">Deal / Closing Prospek</label>
+                                            <input 
+                                                type="number" 
+                                                value={metricsData[selectedDay].deal || ''}
+                                                onChange={(e) => setMetricsData({
+                                                    ...metricsData,
+                                                    [selectedDay]: { ...metricsData[selectedDay], deal: Number(e.target.value) }
+                                                })}
+                                                className="w-full bg-[#F2F2F7] focus:bg-white rounded-xl py-3 px-3 text-sm font-bold border-0 focus:ring-2 focus:ring-blue-600 outline-none text-center text-blue-700 bg-blue-50/50"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="border-b border-gray-100 pb-2 pt-2">
+                                        <h3 className="text-xs font-extrabold uppercase text-emerald-600 tracking-wider">JOB SEARCH METRICS</h3>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="text-[10px] font-bold text-gray-500 block mb-1 uppercase">Lamaran Dikirim</label>
+                                            <input 
+                                                type="number" 
+                                                value={metricsData[selectedDay].lamaran || ''}
+                                                onChange={(e) => setMetricsData({
+                                                    ...metricsData,
+                                                    [selectedDay]: { ...metricsData[selectedDay], lamaran: Number(e.target.value) }
+                                                })}
+                                                className="w-full bg-[#F2F2F7] focus:bg-white rounded-xl py-2 px-3 text-sm font-bold border-0 focus:ring-2 focus:ring-emerald-600 outline-none text-center"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-bold text-gray-500 block mb-1 uppercase">Respon Recruiter</label>
+                                            <input 
+                                                type="number" 
+                                                value={metricsData[selectedDay].response || ''}
+                                                onChange={(e) => setMetricsData({
+                                                    ...metricsData,
+                                                    [selectedDay]: { ...metricsData[selectedDay], response: Number(e.target.value) }
+                                                })}
+                                                className="w-full bg-[#F2F2F7] focus:bg-white rounded-xl py-2 px-3 text-sm font-bold border-0 focus:ring-2 focus:ring-emerald-600 outline-none text-center"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-bold text-gray-500 block mb-1 uppercase">Proses Interview</label>
+                                            <input 
+                                                type="number" 
+                                                value={metricsData[selectedDay].interview || ''}
+                                                onChange={(e) => setMetricsData({
+                                                    ...metricsData,
+                                                    [selectedDay]: { ...metricsData[selectedDay], interview: Number(e.target.value) }
+                                                })}
+                                                className="w-full bg-[#F2F2F7] focus:bg-white rounded-xl py-2 px-3 text-sm font-bold border-0 focus:ring-2 focus:ring-emerald-600 outline-none text-center"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] font-bold text-gray-500 block mb-1 uppercase">Tahap Offer / Penawaran</label>
+                                            <input 
+                                                type="number" 
+                                                value={metricsData[selectedDay].offer || ''}
+                                                onChange={(e) => setMetricsData({
+                                                    ...metricsData,
+                                                    [selectedDay]: { ...metricsData[selectedDay], offer: Number(e.target.value) }
+                                                })}
+                                                className="w-full bg-[#F2F2F7] focus:bg-white rounded-xl py-2 px-3 text-sm font-bold border-0 focus:ring-2 focus:ring-emerald-600 outline-none text-center"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Amiraya (10%) Checklist Monitoring */}
+                                    <div className="border-b border-gray-100 pb-2 pt-2">
+                                        <h3 className="text-xs font-extrabold uppercase text-amber-500 tracking-wider">AMIRAYA MONITORING (10%)</h3>
+                                    </div>
+                                    <div 
+                                        onClick={() => setMetricsData({
+                                            ...metricsData,
+                                            [selectedDay]: { ...metricsData[selectedDay], amirayaStatus: !metricsData[selectedDay].amirayaStatus }
+                                        })}
+                                        className="flex items-center gap-3 bg-amber-50/50 p-4 rounded-xl border border-amber-100 transition-all cursor-pointer active:scale-95"
+                                    >
+                                        <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${metricsData[selectedDay].amirayaStatus ? 'bg-amber-500 border-amber-500 text-white' : 'border-amber-300 bg-white'}`}>
+                                            {metricsData[selectedDay].amirayaStatus && <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="14" height="14"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>}
+                                        </div>
+                                        <div>
+                                            <h4 className="text-xs font-bold text-amber-950">Monitoring & Jaga Aset Selesai</h4>
+                                            <p className="text-[10px] text-amber-700/80 leading-tight">Cek WA, database, and monitoring order (tidak ekspansi).</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Notes input */}
+                                    <div className="pt-2">
+                                        <label className="text-[10px] font-bold text-gray-500 block mb-1 uppercase">Catatan Tambahan Hari Ini</label>
+                                        <textarea 
+                                            value={metricsData[selectedDay].notes || ''}
+                                            onChange={(e) => setMetricsData({
+                                                ...metricsData,
+                                                [selectedDay]: { ...metricsData[selectedDay], notes: e.target.value }
+                                            })}
+                                            className="w-full bg-[#F2F2F7] focus:bg-white rounded-xl py-2.5 px-3 text-xs font-medium border-0 focus:ring-2 focus:ring-blue-600 outline-none"
+                                            placeholder="Tulis hambatan, ide penawaran, atau catatan penting lainnya..."
+                                            rows="2"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB 4: TIMER */}
+                        {currentTab === 'timer' && (
+                            <div className="space-y-4">
+                                <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
+                                    <span className="text-[11px] font-bold uppercase bg-red-100 text-red-600 px-3 py-1 rounded-full tracking-wider animate-pulse mb-3">FOCUS STOPWATCH</span>
+                                    <h2 className="text-lg font-extrabold text-gray-950">Stopwatch Alokasi Waktu</h2>
+                                    <p className="text-xs text-gray-500 mt-1 max-w-[280px]">Disiplin waktu agar target 8 jam kerja efektif harian tercapai sesuai porsi target.</p>
+                                    
+                                    {/* Big Apple Watch style Counter */}
+                                    <div className="my-6 text-4xl font-black font-mono tracking-tight text-gray-900 bg-[#F2F2F7] px-8 py-5 rounded-3xl border border-gray-100 w-full max-w-[260px] shadow-inner text-center">
+                                        {formatTime(timerSeconds[timerType] || 0)}
+                                    </div>
+
+                                    {/* Timer Controls Row */}
+                                    <div className="flex gap-3 justify-center w-full">
+                                        <button 
+                                            onClick={() => setTimerActive(!timerActive)}
+                                            className={`flex-1 py-3 px-4 rounded-xl text-xs font-extrabold shadow-sm transition-all active:scale-95 text-white ${
+                                                timerActive ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-600 hover:bg-blue-700'
+                                            }`}
+                                        >
+                                            {timerActive ? "Jeda Fokus" : "Mulai Fokus"}
+                                        </button>
+                                        <button 
+                                            onClick={() => {
+                                                setTimerActive(false);
+                                                setTimerSeconds(prev => ({ ...prev, [timerType]: 0 }));
+                                            }}
+                                            className="bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 px-5 rounded-xl text-xs font-bold transition-all active:scale-95"
+                                        >
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Task selection cards for Timer */}
+                                <div className="space-y-3">
+                                    <h3 className="font-extrabold text-xs uppercase text-gray-500 tracking-wider px-1">Pilih Kategori Fokus</h3>
+                                    
+                                    <div className="grid grid-cols-1 gap-2.5">
+                                        {/* Freelance Timer Picker */}
+                                        <div 
+                                            onClick={() => { setTimerType('freelance'); setTimerActive(false); }}
+                                            className={`p-4 rounded-xl border transition-all cursor-pointer ${
+                                                timerType === 'freelance' 
+                                                ? 'bg-blue-50/50 border-blue-500 ring-2 ring-blue-500/10' 
+                                                : 'bg-white border-gray-100'
+                                            }`}
+                                        >
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="w-3 h-3 rounded-full bg-blue-600"></span>
+                                                    <span className="text-xs font-extrabold text-gray-900 uppercase">Freelance (60%)</span>
+                                                </div>
+                                                <span className="text-[10px] text-gray-500 font-bold">Target: 5 Jam</span>
+                                            </div>
+                                            <div className="flex justify-between items-end mt-3">
+                                                <span className="text-xs text-gray-400">Total akumulasi</span>
+                                                <span className="text-sm font-extrabold font-mono text-blue-600">{formatTime(timerSeconds.freelance)}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Job Search Timer Picker */}
+                                        <div 
+                                            onClick={() => { setTimerType('jobsearch'); setTimerActive(false); }}
+                                            className={`p-4 rounded-xl border transition-all cursor-pointer ${
+                                                timerType === 'jobsearch' 
+                                                ? 'bg-emerald-50/50 border-emerald-500 ring-2 ring-emerald-500/10' 
+                                                : 'bg-white border-gray-100'
+                                            }`}
+                                        >
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
+                                                    <span className="text-xs font-extrabold text-gray-900 uppercase">Job Search (30%)</span>
+                                                </div>
+                                                <span className="text-[10px] text-gray-500 font-bold">Target: 2.5 Jam</span>
+                                            </div>
+                                            <div className="flex justify-between items-end mt-3">
+                                                <span className="text-xs text-gray-400">Total akumulasi</span>
+                                                <span className="text-sm font-extrabold font-mono text-emerald-600">{formatTime(timerSeconds.jobsearch)}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Amiraya Timer Picker */}
+                                        <div 
+                                            onClick={() => { setTimerType('amiraya'); setTimerActive(false); }}
+                                            className={`p-4 rounded-xl border transition-all cursor-pointer ${
+                                                timerType === 'amiraya' 
+                                                ? 'bg-amber-50/50 border-amber-500 ring-2 ring-amber-500/10' 
+                                                : 'bg-white border-gray-100'
+                                            }`}
+                                        >
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="w-3 h-3 rounded-full bg-amber-500"></span>
+                                                    <span className="text-xs font-extrabold text-gray-900 uppercase">Amiraya (10%)</span>
+                                                </div>
+                                                <span className="text-[10px] text-gray-500 font-bold">Target: 0.5 - 1 Jam</span>
+                                            </div>
+                                            <div className="flex justify-between items-end mt-3">
+                                                <span className="text-xs text-gray-400">Total akumulasi</span>
+                                                <span className="text-sm font-extrabold font-mono text-amber-500">{formatTime(timerSeconds.amiraya)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB 5: RULES */}
+                        {currentTab === 'rules' && (
+                            <div className="space-y-4">
+                                <div className="bg-gradient-to-br from-red-600 to-rose-700 text-white rounded-2xl p-5 shadow-lg relative overflow-hidden">
+                                    <div className="absolute right-[-20px] top-[-10px] opacity-10 pointer-events-none">
+                                        <svg width="120" height="120" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                                    </div>
+                                    <h3 className="text-sm font-black uppercase tracking-widest bg-white/20 inline-block px-2.5 py-0.5 rounded mb-2">PENTING!</h3>
+                                    <h2 className="text-xl font-black">7 ATURAN WAJIB MINGGU INI</h2>
+                                    <p className="text-xs text-rose-100 mt-1 leading-relaxed">Penyimpangan dari aturan ini akan merusak fokus Anda mendapatkan cashflow secepatnya.</p>
+                                </div>
+
+                                {/* Rules detail listing */}
+                                <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-4">
+                                    <h3 className="text-xs font-extrabold text-red-600 uppercase tracking-widest flex items-center gap-1.5">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+                                        </svg>
+                                        Jangan Lakukan Hal Ini:
+                                    </h3>
+                                    <div className="space-y-3">
+                                        {PLAN_DATA.rules.map((rule, idx) => (
+                                            <div key={idx} className="flex items-start gap-3 bg-red-50/40 p-3 rounded-xl border border-red-100/30">
+                                                <div className="mt-0.5 w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center text-[10px] font-black shrink-0">
+                                                    ✕
+                                                </div>
+                                                <span className="text-xs text-gray-800 font-bold leading-tight">{rule}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="p-3 bg-amber-50 rounded-xl border border-amber-100/60 mt-4 text-center">
+                                        <p className="text-xs text-amber-950 font-bold">FOKUS UTAMA = ACTION YANG MENGHASILKAN UANG!</p>
+                                    </div>
+                                </div>
+
+                                {/* Reset button */}
+                                <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center justify-between">
+                                    <div>
+                                        <h4 className="font-extrabold text-xs text-red-600 uppercase">Setel Ulang Aplikasi</h4>
+                                        <p className="text-[10px] text-gray-500">Menghapus semua progres & data tersimpan</p>
+                                    </div>
+                                    <button 
+                                        onClick={() => {
+                                            localStorage.removeItem('rezeki_2026_tasks');
+                                            localStorage.removeItem('rezeki_2026_outputs');
+                                            localStorage.removeItem('rezeki_2026_metrics_v2');
+                                            localStorage.removeItem('rezeki_2026_timer_seconds');
+                                            window.location.reload();
+                                        }} 
+                                        className="bg-red-50 text-red-600 hover:bg-red-100 px-3 py-2 rounded-xl text-xs font-bold transition-all"
+                                    >
+                                        Reset Data
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </main>
+
+                    {/* Sticky Modern iOS Bottom Tab Navigation Bar */}
+                    <nav className="bg-white/95 backdrop-blur-lg border-t border-gray-200 fixed bottom-0 left-0 right-0 z-50 px-4 py-2 flex justify-between items-center safe-bottom shadow-[0_-5px_15px_rgba(0,0,0,0.02)]">
+                        <button 
+                            onClick={() => setCurrentTab('dashboard')} 
+                            className={`flex-1 flex flex-col items-center justify-center py-1 transition-all ${currentTab === 'dashboard' ? 'text-blue-600 scale-105' : 'text-gray-400 hover:text-gray-600'}`}
+                        >
+                            <svg className="w-5.5 h-5.5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            <span className="text-[10px] font-bold">Dashboard</span>
+                        </button>
+                        
+                        <button 
+                            onClick={() => setCurrentTab('planner')} 
+                            className={`flex-1 flex flex-col items-center justify-center py-1 transition-all ${currentTab === 'planner' ? 'text-blue-600 scale-105' : 'text-gray-400 hover:text-gray-600'}`}
+                        >
+                            <svg className="w-5.5 h-5.5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span className="text-[10px] font-bold">7 Hari</span>
+                        </button>
+
+                        <button 
+                            onClick={() => setCurrentTab('metrics')} 
+                            className={`flex-1 flex flex-col items-center justify-center py-1 transition-all ${currentTab === 'metrics' ? 'text-blue-600 scale-105' : 'text-gray-400 hover:text-gray-600'}`}
+                        >
+                            <svg className="w-5.5 h-5.5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                            </svg>
+                            <span className="text-[10px] font-bold">Metrik</span>
+                        </button>
+
+                        <button 
+                            onClick={() => setCurrentTab('timer')} 
+                            className={`flex-1 flex flex-col items-center justify-center py-1 transition-all ${currentTab === 'timer' ? 'text-blue-600 scale-105' : 'text-gray-400 hover:text-gray-600'}`}
+                        >
+                            <svg className="w-5.5 h-5.5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span className="text-[10px] font-bold">Timer</span>
+                        </button>
+
+                        <button 
+                            onClick={() => setCurrentTab('rules')} 
+                            className={`flex-1 flex flex-col items-center justify-center py-1 transition-all ${currentTab === 'rules' ? 'text-blue-600 scale-105' : 'text-gray-400 hover:text-gray-600'}`}
+                        >
+                            <svg className="w-5.5 h-5.5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            <span className="text-[10px] font-bold">Aturan</span>
+                        </button>
+                    </nav>
+                </div>
+            );
+        }
+
+        const rootElement = document.getElementById('root');
+        const root = ReactDOM.createRoot(rootElement);
+        root.render(<App />);
+    </script>
+</body>
+</html>
