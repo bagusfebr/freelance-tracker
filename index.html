@@ -295,21 +295,28 @@
                 return initial;
             });
 
-            // Timer (Stopwatch) states for Alokasi Waktu
-            const [timerActive, setTimerActive] = useState(false);
-            const [timerType, setTimerType] = useState('freelance'); // freelance, jobsearch, amiraya
-            const [timerSeconds, setTimerSeconds] = useState(() => {
+            // NEW robust, background-friendly persistent timer state
+            const [timerState, setTimerState] = useState(() => {
                 try {
-                    const saved = localStorage.getItem('rezeki_2026_timer_seconds');
-                    return saved ? JSON.parse(saved) : { freelance: 0, jobsearch: 0, amiraya: 0 };
-                } catch (e) {
-                    return { freelance: 0, jobsearch: 0, amiraya: 0 };
-                }
+                    const saved = localStorage.getItem('rezeki_2026_timer_state_v3');
+                    if (saved) {
+                        return JSON.parse(saved);
+                    }
+                } catch (e) {}
+                return {
+                    isRunning: false,
+                    activeType: 'freelance', // freelance, jobsearch, amiraya
+                    startTime: null,          // Timestamp of when active run started
+                    accumulated: { freelance: 0, jobsearch: 0, amiraya: 0 } // In seconds
+                };
             });
+
+            // State to trigger state updates visually in UI when active
+            const [now, setNow] = useState(Date.now());
 
             const [iosInstallPrompt, setIosInstallPrompt] = useState(false);
 
-            // Sync with local storage safely
+            // Sync task checklists and metric logs to local storage
             useEffect(() => {
                 localStorage.setItem('rezeki_2026_tasks', JSON.stringify(taskChecks));
             }, [taskChecks]);
@@ -322,25 +329,36 @@
                 localStorage.setItem('rezeki_2026_metrics_v2', JSON.stringify(metricsData));
             }, [metricsData]);
 
+            // Sync background timer to local storage
             useEffect(() => {
-                localStorage.setItem('rezeki_2026_timer_seconds', JSON.stringify(timerSeconds));
-            }, [timerSeconds]);
+                localStorage.setItem('rezeki_2026_timer_state_v3', JSON.stringify(timerState));
+            }, [timerState]);
 
-            // Timer Tick effect
+            // Handle browser ticking when active
             useEffect(() => {
                 let interval = null;
-                if (timerActive) {
+                if (timerState.isRunning) {
                     interval = setInterval(() => {
-                        setTimerSeconds(prev => {
-                            const updated = { ...prev, [timerType]: prev[timerType] + 1 };
-                            return updated;
-                        });
-                    }, 1000);
-                } else {
-                    clearInterval(interval);
+                        setNow(Date.now());
+                    }, 500);
                 }
                 return () => clearInterval(interval);
-            }, [timerActive, timerType]);
+            }, [timerState.isRunning]);
+
+            // Listen to browser tab visibility changes & focus events to force calculations instantly
+            useEffect(() => {
+                const handleActivitySync = () => {
+                    if (document.visibilityState === 'visible') {
+                        setNow(Date.now());
+                    }
+                };
+                window.addEventListener('visibilitychange', handleActivitySync);
+                window.addEventListener('focus', handleActivitySync);
+                return () => {
+                    window.removeEventListener('visibilitychange', handleActivitySync);
+                    window.removeEventListener('focus', handleActivitySync);
+                };
+            }, []);
 
             // Check if opened as standalone or check iOS Safari
             useEffect(() => {
@@ -351,6 +369,75 @@
                     setIosInstallPrompt(true);
                 }
             }, []);
+
+            // Helper to get exact, true elapsed seconds (even when backgrounded)
+            const getLiveSeconds = (type) => {
+                if (timerState.isRunning && timerState.activeType === type && timerState.startTime) {
+                    const diff = Math.floor((now - timerState.startTime) / 1000);
+                    return timerState.accumulated[type] + (diff > 0 ? diff : 0);
+                }
+                return timerState.accumulated[type] || 0;
+            };
+
+            // Timer actions
+            const startTimer = () => {
+                setTimerState(prev => {
+                    if (prev.isRunning) return prev;
+                    return {
+                        ...prev,
+                        isRunning: true,
+                        startTime: Date.now()
+                    };
+                });
+                setNow(Date.now());
+            };
+
+            const pauseTimer = () => {
+                setTimerState(prev => {
+                    if (!prev.isRunning) return prev;
+                    const diff = Math.floor((Date.now() - prev.startTime) / 1000);
+                    const newAccumulated = { ...prev.accumulated };
+                    newAccumulated[prev.activeType] += (diff > 0 ? diff : 0);
+                    return {
+                        ...prev,
+                        isRunning: false,
+                        startTime: null,
+                        accumulated: newAccumulated
+                    };
+                });
+            };
+
+            const resetTimer = () => {
+                setTimerState(prev => {
+                    const newAccumulated = { ...prev.accumulated };
+                    newAccumulated[prev.activeType] = 0;
+                    return {
+                        ...prev,
+                        isRunning: false,
+                        startTime: null,
+                        accumulated: newAccumulated
+                    };
+                });
+            };
+
+            const changeTimerType = (newType) => {
+                setTimerState(prev => {
+                    let newAccumulated = { ...prev.accumulated };
+                    // If switching while running, commit current runtime to prev type first
+                    if (prev.isRunning && prev.startTime) {
+                        const diff = Math.floor((Date.now() - prev.startTime) / 1000);
+                        newAccumulated[prev.activeType] += (diff > 0 ? diff : 0);
+                    }
+                    return {
+                        ...prev,
+                        activeType: newType,
+                        isRunning: false, // Paused initially on switch for clarity
+                        startTime: null,
+                        accumulated: newAccumulated
+                    };
+                });
+                setNow(Date.now());
+            };
 
             // Sum metrics for Weekly Progress calculations
             const getCumulativeMetrics = () => {
@@ -953,28 +1040,31 @@
                                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
                                     <span className="text-[11px] font-bold uppercase bg-red-100 text-red-600 px-3 py-1 rounded-full tracking-wider animate-pulse mb-3">FOCUS STOPWATCH</span>
                                     <h2 className="text-lg font-extrabold text-gray-950">Stopwatch Alokasi Waktu</h2>
-                                    <p className="text-xs text-gray-500 mt-1 max-w-[280px]">Disiplin waktu agar target 8 jam kerja efektif harian tercapai sesuai porsi target.</p>
+                                    <p className="text-xs text-gray-500 mt-1 max-w-[280px]">Bekerja di latar belakang. Aman meski layar terkunci atau aplikasi ditutup!</p>
                                     
                                     {/* Big Apple Watch style Counter */}
                                     <div className="my-6 text-4xl font-black font-mono tracking-tight text-gray-900 bg-[#F2F2F7] px-8 py-5 rounded-3xl border border-gray-100 w-full max-w-[260px] shadow-inner text-center">
-                                        {formatTime(timerSeconds[timerType] || 0)}
+                                        {formatTime(getLiveSeconds(timerState.activeType))}
                                     </div>
 
                                     {/* Timer Controls Row */}
                                     <div className="flex gap-3 justify-center w-full">
                                         <button 
-                                            onClick={() => setTimerActive(!timerActive)}
+                                            onClick={() => {
+                                                if (timerState.isRunning) {
+                                                    pauseTimer();
+                                                } else {
+                                                    startTimer();
+                                                }
+                                            }}
                                             className={`flex-1 py-3 px-4 rounded-xl text-xs font-extrabold shadow-sm transition-all active:scale-95 text-white ${
-                                                timerActive ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-600 hover:bg-blue-700'
+                                                timerState.isRunning ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-600 hover:bg-blue-700'
                                             }`}
                                         >
-                                            {timerActive ? "Jeda Fokus" : "Mulai Fokus"}
+                                            {timerState.isRunning ? "Jeda Fokus" : "Mulai Fokus"}
                                         </button>
                                         <button 
-                                            onClick={() => {
-                                                setTimerActive(false);
-                                                setTimerSeconds(prev => ({ ...prev, [timerType]: 0 }));
-                                            }}
+                                            onClick={resetTimer}
                                             className="bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 px-5 rounded-xl text-xs font-bold transition-all active:scale-95"
                                         >
                                             Reset
@@ -989,11 +1079,11 @@
                                     <div className="grid grid-cols-1 gap-2.5">
                                         {/* Freelance Timer Picker */}
                                         <div 
-                                            onClick={() => { setTimerType('freelance'); setTimerActive(false); }}
+                                            onClick={() => changeTimerType('freelance')}
                                             className={`p-4 rounded-xl border transition-all cursor-pointer ${
-                                                timerType === 'freelance' 
+                                                timerState.activeType === 'freelance' 
                                                 ? 'bg-blue-50/50 border-blue-500 ring-2 ring-blue-500/10' 
-                                                : 'bg-white border-gray-100'
+                                                : 'bg-white border-gray-100 hover:bg-gray-50'
                                             }`}
                                         >
                                             <div className="flex justify-between items-center">
@@ -1005,17 +1095,17 @@
                                             </div>
                                             <div className="flex justify-between items-end mt-3">
                                                 <span className="text-xs text-gray-400">Total akumulasi</span>
-                                                <span className="text-sm font-extrabold font-mono text-blue-600">{formatTime(timerSeconds.freelance)}</span>
+                                                <span className="text-sm font-extrabold font-mono text-blue-600">{formatTime(getLiveSeconds('freelance'))}</span>
                                             </div>
                                         </div>
 
                                         {/* Job Search Timer Picker */}
                                         <div 
-                                            onClick={() => { setTimerType('jobsearch'); setTimerActive(false); }}
+                                            onClick={() => changeTimerType('jobsearch')}
                                             className={`p-4 rounded-xl border transition-all cursor-pointer ${
-                                                timerType === 'jobsearch' 
+                                                timerState.activeType === 'jobsearch' 
                                                 ? 'bg-emerald-50/50 border-emerald-500 ring-2 ring-emerald-500/10' 
-                                                : 'bg-white border-gray-100'
+                                                : 'bg-white border-gray-100 hover:bg-gray-50'
                                             }`}
                                         >
                                             <div className="flex justify-between items-center">
@@ -1027,17 +1117,17 @@
                                             </div>
                                             <div className="flex justify-between items-end mt-3">
                                                 <span className="text-xs text-gray-400">Total akumulasi</span>
-                                                <span className="text-sm font-extrabold font-mono text-emerald-600">{formatTime(timerSeconds.jobsearch)}</span>
+                                                <span className="text-sm font-extrabold font-mono text-emerald-600">{formatTime(getLiveSeconds('jobsearch'))}</span>
                                             </div>
                                         </div>
 
                                         {/* Amiraya Timer Picker */}
                                         <div 
-                                            onClick={() => { setTimerType('amiraya'); setTimerActive(false); }}
+                                            onClick={() => changeTimerType('amiraya')}
                                             className={`p-4 rounded-xl border transition-all cursor-pointer ${
-                                                timerType === 'amiraya' 
+                                                timerState.activeType === 'amiraya' 
                                                 ? 'bg-amber-50/50 border-amber-500 ring-2 ring-amber-500/10' 
-                                                : 'bg-white border-gray-100'
+                                                : 'bg-white border-gray-100 hover:bg-gray-50'
                                             }`}
                                         >
                                             <div className="flex justify-between items-center">
@@ -1049,7 +1139,7 @@
                                             </div>
                                             <div className="flex justify-between items-end mt-3">
                                                 <span className="text-xs text-gray-400">Total akumulasi</span>
-                                                <span className="text-sm font-extrabold font-mono text-amber-500">{formatTime(timerSeconds.amiraya)}</span>
+                                                <span className="text-sm font-extrabold font-mono text-amber-500">{formatTime(getLiveSeconds('amiraya'))}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -1103,7 +1193,7 @@
                                             localStorage.removeItem('rezeki_2026_tasks');
                                             localStorage.removeItem('rezeki_2026_outputs');
                                             localStorage.removeItem('rezeki_2026_metrics_v2');
-                                            localStorage.removeItem('rezeki_2026_timer_seconds');
+                                            localStorage.removeItem('rezeki_2026_timer_state_v3');
                                             window.location.reload();
                                         }} 
                                         className="bg-red-50 text-red-600 hover:bg-red-100 px-3 py-2 rounded-xl text-xs font-bold transition-all"
